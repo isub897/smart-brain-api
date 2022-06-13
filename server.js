@@ -1,5 +1,6 @@
 const express = require('express')
 const app = express()
+var cors = require('cors');
 const {ClarifaiStub, grpc} = require("clarifai-nodejs-grpc");
 
 const stub = ClarifaiStub.grpc();
@@ -9,6 +10,7 @@ metadata.set("authorization", "Key 79932e6f391f47c69cb5feec2557b9da");
 
 
 app.use(express.json());
+app.use(cors());
 // app.use(express.urlencoded({ extended: false }));
 
 app.get('/', function (req, res) {
