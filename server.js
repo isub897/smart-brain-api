@@ -8,13 +8,46 @@ const stub = ClarifaiStub.grpc();
 const metadata = new grpc.Metadata();
 metadata.set("authorization", "Key 79932e6f391f47c69cb5feec2557b9da");
 
+const users = [
+    {
+        name: "test",
+        email: "test",
+        password: "test",
+        entries: 2,
+        joined: new Date()
+    },
+    {
+        name: "Henry",
+        email: "hen@gmail.com",
+        password: "jam",
+        entries: 4,
+        joined: new Date()
+    },
+    {
+        name: "Ann",
+        email: "Ann@gmail.com",
+        password: "pb",
+        entries: 6,
+        joined: new Date()
+    }
+]
 
 app.use(express.json());
 app.use(cors());
 // app.use(express.urlencoded({ extended: false }));
 
 app.get('/', function (req, res) {
-  res.json('hows it going g')
+  res.json(users)
+})
+
+app.post('/signin', (req, res) => {
+    const {email, password} = req.body;
+    if (!email || !password) {return res.status(400).json('fill')}
+    if(email === users[0].email && password === users[0].password) {
+        return res.json('success')
+    } else {
+        return res.status(400).json('failure');
+    }  
 })
 
 app.post('/image', (req, res)=> {
@@ -29,7 +62,7 @@ app.post('/image', (req, res)=> {
         // Error response
         (err, response) => {
             if (err || response.status.code !== 10000) {
-                res.status(400).json('error uploading image')
+                res.status(400).json('error')
                 return;
             }
             // outputs an object containing the bounding-box paramaters
