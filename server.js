@@ -10,6 +10,7 @@ metadata.set("authorization", "Key 79932e6f391f47c69cb5feec2557b9da");
 
 const users = [
     {
+        id: 1,
         name: "test",
         email: "test",
         password: "test",
@@ -17,6 +18,7 @@ const users = [
         joined: new Date()
     },
     {
+        id: 2,
         name: "Henry",
         email: "hen@gmail.com",
         password: "jam",
@@ -24,6 +26,7 @@ const users = [
         joined: new Date()
     },
     {
+        id: 3,
         name: "Ann",
         email: "Ann@gmail.com",
         password: "pb",
@@ -53,7 +56,7 @@ app.post('/signin', (req, res) => {
 app.post('/register', (req, res) => {
     const {name, email, password, confirm} = req.body;
     if (!name || !email || !password || !confirm) {return res.status(400).json('fill')}
-    if(password != confirm) {return res.status(400).json('match')}
+    if(password !== confirm) {return res.status(400).json('match')}
     users.push({
         name: name,
         email: email,
