@@ -4,6 +4,7 @@ var cors = require('cors');
 const {ClarifaiStub, grpc} = require("clarifai-nodejs-grpc");
 const knex = require('knex');
 const { response } = require('express');
+var bcrypt = require('bcryptjs');
 
 const postgres = knex({
     client: 'pg',
@@ -15,6 +16,14 @@ const postgres = knex({
       database : 'smart-brain'
     }
   });
+
+
+    // bcrypt.genSalt(10, function(err, salt) {
+    //     bcrypt.hash("test", 10, function(err, hash) {
+    //         console.log(hash)
+    //         // Store hash in your password DB.
+    //     });
+    // });
 
 const stub = ClarifaiStub.grpc();
 
@@ -59,11 +68,25 @@ app.get('/', function (req, res) {
 app.post('/signin', (req, res) => {
     const {email, password} = req.body;
     if (!email || !password) {return res.status(400).json('fill')}
-    if(email === users[0].email && password === users[0].password) {
-        return res.json('success')
-    } else {
-        return res.status(400).json('failure');
-    }  
+
+    postgres('login').where({
+        email: email,
+    }).select('hash')
+    .then(response=> {
+        bcrypt.compare(password, response[0].hash, function(err, result) {
+            if(result) {
+                postgres('users').where({
+                    email: email,
+                }).select('*')
+                .then(user => {
+                    return res.json(user[0])
+                })
+            } else {
+                return res.status(400).json('failure');
+            }
+        });      
+    })
+    .catch(err=> res.status(400).json('failure'))
 })
 
 app.post('/register', (req, res) => {
