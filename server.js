@@ -50,6 +50,20 @@ app.post('/signin', (req, res) => {
     }  
 })
 
+app.post('/register', (req, res) => {
+    const {name, email, password, confirm} = req.body;
+    if (!name || !email || !password || !confirm) {return res.status(400).json('fill')}
+    if(password != confirm) {return res.status(400).json('match')}
+    users.push({
+        name: name,
+        email: email,
+        password: password,
+        entries: 0,
+        joined: new Date()
+    });
+    return res.json(users[users.length-1]);
+})
+
 app.post('/image', (req, res)=> {
 
     stub.PostModelOutputs(
