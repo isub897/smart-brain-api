@@ -2,6 +2,19 @@ const express = require('express')
 const app = express()
 var cors = require('cors');
 const {ClarifaiStub, grpc} = require("clarifai-nodejs-grpc");
+const knex = require('knex');
+const { response } = require('express');
+
+const postgres = knex({
+    client: 'pg',
+    connection: {
+      host : '127.0.0.1',
+      port : 5432,
+      user : 'postgres',
+      password : 'test',
+      database : 'smart-brain'
+    }
+  });
 
 const stub = ClarifaiStub.grpc();
 
