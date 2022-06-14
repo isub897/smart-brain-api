@@ -58,6 +58,7 @@ app.post('/register', (req, res) => {
     if (!name || !email || !password || !confirm) {return res.status(400).json('fill')}
     if(password !== confirm) {return res.status(400).json('match')}
     users.push({
+        id: 4,
         name: name,
         email: email,
         password: password,
