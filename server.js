@@ -112,7 +112,7 @@ app.post('/register', (req, res) => {
         postgres('users').where({
             email: email,
           }).select('*')
-          .then(user=> res.json(user))
+          .then(user=> res.json(user[0]))
       })
       .catch(function(err) {
         res.status(400).json('Failure');
@@ -138,6 +138,17 @@ app.post('/image', (req, res)=> {
             res.json(response.outputs[0].data.regions[0].region_info.bounding_box);
         }
     );
+})
+
+app.put('/image', (req, res)=> {
+    const {email, entries} = req.body;
+    postgres('users')
+    .where({ email: email })
+    .update({ 
+        entries: entries 
+    }, ['entries'])
+    .then(response=> res.json(response[0].entries))
+    .catch(err=> res.status(400).json(err))
 })
 
 app.listen(3000)
