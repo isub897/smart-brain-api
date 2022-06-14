@@ -18,13 +18,6 @@ const postgres = knex({
   });
 
 
-    // bcrypt.genSalt(10, function(err, salt) {
-    //     bcrypt.hash("test", 10, function(err, hash) {
-    //         console.log(hash)
-    //         // Store hash in your password DB.
-    //     });
-    // });
-
 const stub = ClarifaiStub.grpc();
 
 const metadata = new grpc.Metadata();
