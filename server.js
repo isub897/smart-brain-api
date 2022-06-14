@@ -93,15 +93,37 @@ app.post('/register', (req, res) => {
     const {name, email, password, confirm} = req.body;
     if (!name || !email || !password || !confirm) {return res.status(400).json('fill')}
     if(password !== confirm) {return res.status(400).json('match')}
-    users.push({
-        id: 4,
-        name: name,
-        email: email,
-        password: password,
-        entries: 0,
-        joined: new Date()
-    });
-    return res.json(users[users.length-1]);
+
+    const hash = bcrypt.hashSync(password, 10);
+
+
+    postgres.transaction(function(trx) {
+        postgres('login').transacting(trx)
+        .insert({
+            email: email,
+            hash: hash
+        })
+          .then(function(resp) {
+            postgres('users').transacting(trx)
+            .insert({
+                name: name,
+                email: email,
+                joined: new Date()
+            })
+            .then(response)
+          })
+          .then(trx.commit)
+          .catch(trx.rollback);
+      })
+      .then(function(resp) {
+        postgres('users').where({
+            email: email,
+          }).select('*')
+          .then(user=> res.json(user))
+      })
+      .catch(function(err) {
+        res.status(400).json('Failure');
+      });
 })
 
 app.post('/image', (req, res)=> {
